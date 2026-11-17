@@ -1,7 +1,7 @@
 ---
 name: dtnpm-station-setup
 description: >-
-  Guides operators through setting up and configuring a DTN Postmaster (`dtnpm`) station: Cargo build profiles (`emcom`, `amsat`, `node-headless`, `webui-remote`), `dtnpm init` and `generate-config`, TOML/YAML station EIDs, SQLite storage and 4-tier LRU quotas, static routes, RFC 9171 validity toggles, and WebUI access. Use when initializing or configuring a DTN Postmaster node.
+  Guides operators through setting up and configuring a DTN Postmaster (`dtnpm`) station: Cargo build profiles (`desktop`, `amsat`, `node-headless`, `webui-remote`), `dtnpm init` and `generate-config`, TOML/YAML station EIDs, SQLite storage and 4-tier LRU quotas, static routes, RFC 9171 validity toggles, and WebUI access. Use when initializing or configuring a DTN Postmaster node.
 ---
 
 # Setting Up and Configuring a `dtnpm` Station
@@ -14,7 +14,7 @@ From the `dtnpm` repository, select the appropriate profile via Cargo features:
 
 | Profile / Feature | Use Case | Build Command |
 | --- | --- | --- |
-| Default (`emcom`) | Full station (BPA node + `ltp`/`hqfbp`/`mercury` CLAs + `chat`/`files`/`senml` WebUI + CLI utilities) | `cargo build --release` |
+| Default (`desktop`) | Full station (BPA node + `ltp`/`hqfbp`/`mercury` CLAs + `chat`/`files`/`senml` WebUI + CLI utilities) | `cargo build --release` |
 | `amsat` | Lightweight satellite / AMSAT configuration (`node`, `cli`, `cla-ltp`, `cla-hqfbp`) | `cargo build --release --no-default-features --features amsat` |
 | `node-headless` | BPA daemon + CLAs without WebUI or interactive CLI (`node`, CLAs) | `cargo build --release --no-default-features --features node-headless` |
 | `webui-remote` | Standalone WebUI connected to a remote BPA over gRPC/UDS | `cargo build --release --no-default-features --features webui-remote` |
