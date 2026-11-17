@@ -1,14 +1,14 @@
-# Politique de sécurité — `skills`
+# Security Policy — `skills`
 
-## Bonnes pratiques documentaires
+## Documentation Best Practices
 
-Les skills de ce dépôt décrivent des configurations système, réseau, systemd et de sécurité cryptographique (IAM + BPSec). Toute documentation erronée peut amener un opérateur à exposer son nœud DTN sans authentification ou à fuiter des secrets dans l'historique shell ou `/proc`.
+The skills in this repository describe system, network, systemd, and cryptographic security (IAM + BPSec) configurations. Incorrect documentation can lead an operator to expose their DTN node without authentication or leak secrets in shell history or `/proc`.
 
-Toute contribution doit donc :
-- Privilégier `--token-file`, `DTN_HDY_TOKEN_FILE`, `--password-stdin` et les Unix Domain Sockets authentifiés.
-- Signaler clairement les implications des drapeaux d'opt-in dangereux (`--allow-unauthenticated-udp`, `--allow-unidentified-rf`, `--verify-policy ignore`, `--allow-third-party-report-to`, `allow_private_ips`).
-- Rappel permanent radioamateur : le chiffrement de charge utile est interdit sur les fréquences amateurs ; seule **l'authentification / intégrité (BPSec BIB HMAC-SHA256)** et le trafic en clair sont conformes en RF amateur.
+Any contribution must therefore:
+- Prefer `--token-file`, `DTN_HDY_TOKEN_FILE`, `--password-stdin`, and authenticated Unix Domain Sockets.
+- Clearly highlight the implications of dangerous opt-in flags (`--allow-unauthenticated-udp`, `--allow-unidentified-rf`, `--verify-policy ignore`, `--allow-third-party-report-to`, `allow_private_ips`).
+- Permanent amateur radio reminder: payload encryption is prohibited on amateur frequencies; only **authentication / integrity (BPSec BIB HMAC-SHA256)** and cleartext traffic are compliant on amateur RF.
 
-## Signaler un problème de sécurité
+## Reporting a Security Issue
 
-Contacter `security@dtn-postmaster.org` ou ouvrir une *Security Advisory* privée sur GitHub pour toute recommandation dangereuse ou vulnérabilité détectée.
+Contact `security@dtn-postmaster.org` or open a private *Security Advisory* on GitHub for any dangerous recommendation or detected vulnerability.

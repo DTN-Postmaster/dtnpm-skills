@@ -1,10 +1,10 @@
-# Contribuer à `skills`
+# Contributing to `skills`
 
-Merci de contribuer aux guides opérationnels et compétences utilisateurs de `dtn-postmaster`.
+Thank you for contributing to the operational guides and user skills for `dtn-postmaster`.
 
-## Ajouter ou mettre à jour une skill
+## Adding or Updating a Skill
 
-1. Créez ou éditez `skills/<nom-skill>/SKILL.md` avec un frontmatter YAML valide (`name` correspondant au dossier, `description` précise à la troisième personne).
-2. Vérifiez chaque flag CLI (`--help` ou code source Rust dans `dtnpm/src/bin/`, `dtnpm-app-basket/src/`, `dtnpm-cla-*/src/`) et chaque clé TOML/YAML (`config.example.toml`, `examples/config-iam-yunohost.toml`).
-3. N'introduisez aucun vrai jeton, mot de passe ou indicatif privé réel ; utilisez uniquement `F4TEST` ou `N0CALL` dans les exemples.
-4. Exécutez `./scripts/validate-skills.sh` avant tout commit.
+1. Create or edit `skills/<skill-name>/SKILL.md` with valid YAML frontmatter (`name` matching the directory, accurate third-person `description`).
+2. Verify every CLI flag (`--help` or Rust source code in `dtnpm/src/bin/`, `dtnpm-app-basket/src/`, `dtnpm-cla-*/src/`) and every TOML/YAML key (`config.example.toml`, `examples/config-iam-yunohost.toml`).
+3. Never introduce real tokens, passwords, or real private callsigns; only use `F4TEST` or `N0CALL` in examples.
+4. Run `./scripts/validate-skills.sh` before any commit.

@@ -1,26 +1,26 @@
 # DTN Postmaster — Operator & User Skills (`skills`)
 
-Catalogue de compétences (`SKILL.md`) destiné aux opérateurs, radioamateurs, administrateurs système et agents IA configurant ou exploitant **DTN Postmaster (`dtnpm`)** et ses utilitaires CLI.
+Catalog of skills (`SKILL.md`) intended for operators, amateur radio operators, system administrators, and AI agents configuring or operating **DTN Postmaster (`dtnpm`)** and its CLI utilities.
 
-> Pour la création de nouvelles extensions (`dtnpm-app-*`, `dtnpm-mod-*`, `dtnpm-cla-*`) ou les audits de développement Rust/TypeScript, consultez le dépôt compagnon **`skills-dev`**.
+> To create new extensions (`dtnpm-app-*`, `dtnpm-mod-*`, `dtnpm-cla-*`) or run Rust/TypeScript development audits, see the companion repository **`skills-dev`**.
 
-## Skills inclus
+## Included Skills
 
-| Skill | Dossier | Rôle |
+| Skill | Directory | Role |
 | --- | --- | --- |
-| `dtnpm-station-setup` | `skills/dtnpm-station-setup/SKILL.md` | Mise en route d'une station `dtnpm` (`init`, `generate-config`, profils Cargo, TOML/YAML, stockage & quotas, routage, WebUI) |
-| `dtnpm-cla-radio-config` | `skills/dtnpm-cla-radio-config/SKILL.md` | Configuration des adaptateurs RF et réseau (`hqfbp` KISS, `mercury-arq`, `ltp` UDP/KISS, `tcpclv4`) et opt-ins explicites |
-| `dtnpm-cli-utilities` | `skills/dtnpm-cli-utilities/SKILL.md` | Manuel des utilitaires CLI (`dtnsend`, `dtnprint`, `dtnping`, `dtnfiles`, `dtnquery`, `dtntrigger`, `dtnforward`, `dtnbib`, `hdy-stats`, `dtnbasket`, `dtnbasket-cli`) |
-| `dtnpm-iam-bpsec-security` | `skills/dtnpm-iam-bpsec-security/SKILL.md` | Sécurité IAM & BPSec (`dtnpm user`, `dtnpm token`, `[grpc.auth]` UDS, `[auth]` proxy/local, `keystore.toml`, signature/vérification) |
-| `dtnpm-systemd-deployment-diagnostics` | `skills/dtnpm-systemd-deployment-diagnostics/SKILL.md` | Déploiement systemd durci (`dtnpm.service`), permissions `0600`/`0700`, reverse proxy YunoHost/Nginx, diagnostic (`dtnquery`, `hdy-stats`, `journalctl`) |
+| `dtnpm-station-setup` | `skills/dtnpm-station-setup/SKILL.md` | Setting up a `dtnpm` station (`init`, `generate-config`, Cargo profiles, TOML/YAML, storage & quotas, routing, WebUI) |
+| `dtnpm-cla-radio-config` | `skills/dtnpm-cla-radio-config/SKILL.md` | Configuring RF and network adapters (`hqfbp` KISS, `mercury-arq`, `ltp` UDP/KISS, `tcpclv4`) and explicit opt-ins |
+| `dtnpm-cli-utilities` | `skills/dtnpm-cli-utilities/SKILL.md` | CLI utilities manual (`dtnsend`, `dtnprint`, `dtnping`, `dtnfiles`, `dtnquery`, `dtntrigger`, `dtnforward`, `dtnbib`, `hdy-stats`, `dtnbasket`, `dtnbasket-cli`) |
+| `dtnpm-iam-bpsec-security` | `skills/dtnpm-iam-bpsec-security/SKILL.md` | IAM & BPSec security (`dtnpm user`, `dtnpm token`, `[grpc.auth]` UDS, `[auth]` proxy/local, `keystore.toml`, signing/verification) |
+| `dtnpm-systemd-deployment-diagnostics` | `skills/dtnpm-systemd-deployment-diagnostics/SKILL.md` | Hardened systemd deployment (`dtnpm.service`), `0600`/`0700` permissions, YunoHost/Nginx reverse proxy, diagnostics (`dtnquery`, `hdy-stats`, `journalctl`) |
 
-## Installation & découverte
+## Installation & Discovery
 
-### Dans un espace Antigravity (`.agents/skills.json` ou `skills.json`)
+### In an Antigravity Workspace (`.agents/skills.json` or `skills.json`)
 
-Ce dépôt fournit `skills.json` et `.agents/skills.json` pointant sur `skills/`.
+This repository provides `skills.json` and `.agents/skills.json` pointing to `skills/`.
 
-1. Référencer le chemin dans le `skills.json` de votre environnement d'exploitation :
+1. Reference the path in the `skills.json` of your operating environment:
    ```json
    {
      "entries": [
@@ -28,17 +28,17 @@ Ce dépôt fournit `skills.json` et `.agents/skills.json` pointant sur `skills/`
      ]
    }
    ```
-2. Ou copier / lier les répertoires souhaités dans `~/.gemini/antigravity/skills/`.
+2. Or copy / symlink the desired directories into `~/.gemini/antigravity/skills/`.
 
-## Validation locale & CI
+## Local Validation & CI
 
 ```bash
 ./scripts/install-hooks.sh
 ./scripts/validate-skills.sh
 ```
 
-La CI GitHub (`.github/workflows/ci.yml`) utilise exclusivement des actions épinglées par SHA-1 complet et `step-security/harden-runner` avec `permissions: contents: read`.
+GitHub CI (`.github/workflows/ci.yml`) exclusively uses actions pinned by full SHA-1 and `step-security/harden-runner` with `permissions: contents: read`.
 
-## Licence
+## License
 
-Voir [LICENSE.md](LICENSE.md).
+See [LICENSE.md](LICENSE.md).
