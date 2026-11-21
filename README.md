@@ -13,6 +13,8 @@ Catalog of skills (`SKILL.md`) intended for operators, amateur radio operators, 
 | `dtnpm-cli-utilities` | `skills/dtnpm-cli-utilities/SKILL.md` | CLI utilities manual (`dtnsend`, `dtnprint`, `dtnping`, `dtnfiles`, `dtnquery`, `dtntrigger`, `dtnforward`, `dtnbib`, `hdy-stats`, `dtnbasket`, `dtnbasket-cli`) |
 | `dtnpm-iam-bpsec-security` | `skills/dtnpm-iam-bpsec-security/SKILL.md` | IAM & BPSec security (`dtnpm user`, `dtnpm token`, `[grpc.auth]` UDS, `[auth]` proxy/local, `keystore.toml`, signing/verification) |
 | `dtnpm-systemd-deployment-diagnostics` | `skills/dtnpm-systemd-deployment-diagnostics/SKILL.md` | Hardened systemd deployment (`dtnpm.service`), `0600`/`0700` permissions, YunoHost/Nginx reverse proxy, diagnostics (`dtnquery`, `hdy-stats`, `journalctl`) |
+| `dtnpm-rego-filtering` | `skills/dtnpm-rego-filtering/SKILL.md` | Customizing per-bundle OPA/Rego ingress and egress filtering (`ingress.rego`, `egress.rego`, Spray-and-Wait/APRS mutations, `SKIP`) |
+| `dtnpm-rego-routing` | `skills/dtnpm-rego-routing/SKILL.md` | Customizing neighbor-driven OPA/Rego routing policies (`routing.rego`, `VIA`/`FORWARD_REPLICATE`/`DROP`) aligned with Hardy BPA's RIB |
 
 ## Installation & Discovery
 
