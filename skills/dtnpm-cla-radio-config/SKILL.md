@@ -1,7 +1,7 @@
 ---
 name: dtnpm-cla-radio-config
 description: >-
-  Configures Convergence Layer Adapters (`tcpclv4`, `hqfbp`, `mercury-arq`, `ltp`) inside `dtnpm` or standalone (`dtnpm-cla-hqfbp-kiss`, `dtnpm-cla-mercury-arq`, `dtnpm-cla-ltp-kiss`), including KISS TCP/Serial, Direwolf, Mercury TNC, half-duplex pacing, rate limits, and explicit safety opt-ins (`--require-callsign`, `--allow-unidentified-rf`, `--allow-unauthenticated-udp`, `allow-ip-migration`). Use when wiring radio modems, KISS TNCs, UDP links, or Hamnet TCPCLv4 peers.
+  Configures Convergence Layer Adapters (`tcpclv4`, `hqfbp`, `mercury-arq`, `ltp`) inside `dtnpm` or standalone (`dtnpm-cla-hqfbp-kiss`, `dtnpm-cla-mercury-arq`, `dtnpm-cla-ltp-kiss`), including KISS TCP/Serial, Direwolf, Mercury TNC, `esp-pdu-tnc` (ESP-NOW 250-byte MTU, RaptorQ vs Reed-Solomon encoding selection), half-duplex pacing, rate limits, and explicit safety opt-ins (`--require-callsign`, `--allow-unidentified-rf`, `--allow-unauthenticated-udp`, `allow-ip-migration`). Use when wiring radio modems, KISS TNCs, UDP links, or Hamnet TCPCLv4 peers.
 ---
 
 # Radio & Network CLA Configuration (`dtnpm-cla-*`)
@@ -22,9 +22,9 @@ require-tls = false
 peers = ["44.27.131.233:4556"]
 ```
 
-## 2. HQFBP over KISS (Direwolf, Soundmodem, Serial TNC)
+## 2. HQFBP over KISS (Direwolf, Soundmodem, ESP-NOW, Serial TNC)
 
-Suitable for VHF/UHF/HF modems via KISS TCP (`127.0.0.1:8001` typical under Direwolf) or serial port (`/dev/ttyUSB0`).
+Suitable for VHF/UHF/HF modems via KISS TCP (`127.0.0.1:8001` under Direwolf, `127.0.0.1:18001` under `esp-pdu-tnc`) or serial port (`/dev/ttyUSB0`).
 
 ### Integrated Configuration in `dtnpm` (`config.toml`)
 
@@ -35,10 +35,24 @@ type = "hqfbp"
 callsign = "F4TEST-1"
 
 [clas.transport]
-type = "tcp"
-address = "127.0.0.1:8001"
+type = "kiss-tcp"
+server-addr = "127.0.0.1:8001"
 port = 0
 ```
+
+### Channel-Matched HQFBP Encoding Pipelines
+
+Select the encoding pipeline to match the physical link's error behavior and MTU:
+
+- **Direwolf / AFSK / G3RUH (bit-error channel)**:
+  Use chunking plus Reed-Solomon error correction:
+  `hailing-encodings = "gzip, chunk(150), crc32, h, rs(255, 233)"`
+  `default-bundle-encodings = "gzip, chunk(150), crc32, h, rs(255, 233)"`
+- **ESP-NOW via `esp-pdu-tnc` (250-byte max PDU, hardware 802.11b CRC-32 FCS packet-erasure channel over 115200-baud UART)**:
+  **Do not** use `rs(255, 233)` — 255-byte codewords exceed the 250-byte ESP-NOW MTU (causing silent drops in `esp-pdu-tnc`), and intra-frame RS cannot recover frames already discarded by the 802.11 MAC FCS. Instead use RaptorQ erasure coding with UART rate pacing (see `dtnpm/examples/stata-esp-hqfbp.yaml` / `statb-esp-hqfbp.yaml`):
+  - `hailing-encodings = "h"`
+  - `default-bundle-encodings = "gzip, crc32, rq(dlen, 140, 2), h"` (`140`-byte symbols + 4 B PayloadId + ~65–80 B CBOR header fit inside 250 bytes, with 2 repair symbols and self-describing headers)
+  - `rate-limit-bytes-per-sec = 4000`, `burst-capacity-bytes = 512`
 
 ### Standalone Configuration (`dtnpm-cla-hqfbp-kiss`)
 
@@ -90,6 +104,7 @@ Explicit opt-in option for testbench without a valid callsign: `--allow-unidenti
 ### Main Parameters
 
 - `engine-id`: local LTP engine identifier (e.g., `1001`).
+- `max-segment-payload-len`: maximum LTP data segment payload in bytes (default `1400`). Must be lowered to match link MTU: e.g., `200` for 250-byte ESP-NOW `esp-pdu-tnc` links (`dtnpm/examples/stata-esp-ltp.yaml` / `statb-esp-ltp.yaml`), or `80` for narrowband Mercury HF links (`stata-ltp.yaml`).
 - `[transport]`:
   - `type = "udp"`: `bind-addr` (default `0.0.0.0:1113`).
   - `type = "kiss-tcp"`: `server-addr`, `port`, `min-frame-len` (e.g., `15` bytes minimum required by Direwolf, `0` by default), `rate-limit-bytes-per-sec`, `burst-capacity-bytes` (`2048`), `half-duplex` (`true` on simplex radio link), `turnaround-mode` (`"wait-for-report"` or `"fixed-dwell"`), `turnaround-timeout` (`3s`), `dwell-time` (`500ms`).
