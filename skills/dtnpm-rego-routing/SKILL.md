@@ -19,8 +19,8 @@ Follow Hardy's RIB rules (see `../hardy/docs/user-docs/configuration/bpa-server.
   - `100`: Default static routes & routing agents
 - **Pattern specificity**: Exact EIDs beat narrow wildcards, which beat broad wildcards.
 - **Default-to-Wait**: Unmatched bundles stay in `Waiting` until a valid route appears — they are not dropped unless an explicit `DROP` rule matches.
-- **Least-privilege**: Never install blanket catch-all wildcards (`dtn://**`, `ipn:**`) toward arbitrary peers. Only install routes for explicitly authorized destination patterns and allowed neighbor peers.
-- **Default behavior**: The embedded `dtnpm-mod-rego-routing/policies/routing.rego` defines `default routes := []` so `dtnpm` uses static declarative `routes` + blacklist by default.
+- **Least-privilege**: Never install blanket catch-all wildcards (`dtn:**`, `ipn:**`) toward arbitrary peers. Only install routes for explicitly authorized destination patterns and allowed neighbor peers.
+- **Default behavior**: The embedded `dtnpm-mod-rego-routing/policies/routing.rego` defines `default routes := []` and a unified per-bundle `decide` rule (local unregistered → `WAIT`, direct destination → `FORWARD`, APRS strict hop → `FORWARD`, APRS CLA/band alias → `FORWARD` constrained to matching CLA, Spray-and-Wait `L > 1` → `FORWARD` with `retain: true` / `L <= 1` → `WAIT`, plain bundle → `FALLBACK` to `DefaultRib` static routes). See [ADR-0001](../../../dtnpm/docs/adr/0001-aprs-cla-and-group-aliases.md).
 
 ## 2. Policy Contract (`package dtn.routing`)
 
