@@ -23,7 +23,7 @@ printf "Test CQ" | dtnsend -r dtn://f4peer/incoming -l 7200
 dtnsend -r dtn://f4peer/incoming -D message.txt
 ```
 
-Verified options: `-r <EID>`, `[INFILE]`, `-s/--sender`, `-l/--lifetime` (`3600`), `-D/--dryrun`, `--sign-key`, `--sign-key-file`, `--security-source`, `-p/--port`, `-6`, `--token-file`, `--socket`.
+Verified options: `-r <EID>`, `[INFILE]`, `-s/--sender`, `-l/--lifetime` (`3600`), `-D/--dryrun`, `--aprs-path`, `--hop-limit` (`--hop-count`), `--spray-quota` (`--spray-limit`, `--spray-copies`, `--max-copies`), `--status-reports` (`--report-status`), `--record-route` (`--treb`), `--sign-key`, `--sign-key-file`, `--security-source`, `-p/--port`, `-6`, `--token-file`, `--socket`.
 
 ### `dtnprint` — Display bundles received on a service
 
@@ -51,9 +51,10 @@ Verified arguments: `<DIR>` (required positional), `-s/--service` (`"files"`), `
 
 ```bash
 dtnping dtn://f4peer/echo -c 5 -i 2s -w 10s -s 64 --keystore ~/.config/dtn/keystore.toml
+dtnping dtn://f4peer/echo --aprs-path VHF2-2,TCPCL1-1 --hop-limit 12 --spray-quota 8
 ```
 
-Verified options: `<destination>`, `-c/--count`, `-i/--interval` (`1s`), `-s/--size`, `-w/--timeout`, `-W/--wait` (`10s`), `-q/--quiet`, `-t/--ttl`, `--lifetime`, `-S/--source`, `--keystore`, `--verify-*`, `--sign-*`.
+Verified options: `<destination>`, `-c/--count`, `-i/--interval` (`1s`), `-s/--size`, `-w/--timeout`, `-W/--wait` (`10s`), `-q/--quiet`, `-t/--hop-limit` (`--hop-count`, `--ttl`), `--aprs-path`, `--spray-quota` (`--spray-limit`, `--spray-copies`, `--max-copies`), `--record-route` (`--treb`), `--lifetime`, `-S/--source`, `--keystore`, `--verify-*`, `--sign-*`.
 
 ## 2. Automation, Routing, and Inspection
 
@@ -72,7 +73,7 @@ Additional filters on `bundles`: `-d`, `-a <addr>`, `--limit <N>`.
 
 ### `dtntrigger` — Trigger a local executable upon bundle reception
 
-Executes the target command without invoking a shell (`param1=source`, `param2=payload_file`):
+Executes the target command via `/bin/sh -c` with safely quoted positional arguments (`$1=source`, `$2=payload_file`), and exports `DTN_SOURCE`, `DTN_DESTINATION`, `DTN_PAYLOAD_FILE`, `DTN_RETURN_PATH` (canonicalized reversed TREB/APRS/previous-node path for `--aprs-path`), `DTN_TREB_TRACE`, `DTN_APRS_PATH`, `DTN_SPRAY_QUOTA`, `DTN_GRPC_PORT`, `DTN_HDY_SOCKET`, and `DTN_HDY_TOKEN_FILE`:
 
 ```bash
 dtntrigger -e trigger -c /usr/local/bin/on_bundle.sh \
@@ -98,4 +99,4 @@ Verified options: `-d/--database` (`hdy-stats.db`), `-r/--retention` (`60`), `-f
 ## 3. `dtnpm-app-basket` Service (`dtnbasket` and `dtnbasket-cli`)
 
 - **`dtnbasket` daemon**: `-c/--config` (`DTNBASKET_CONFIG`), `-s/--service` (default `dtnbasket`), `--keystore`, `--verify-*`, `--sign-*`, `--token-file`, `--socket`. In the TOML configuration, `[security]` blocks private IPs and *third-party reply-to* by default (`allow_private_ips = false`, `allow_third_party_reply_to = false`), while `allowed_dirs` and `mappings` restrict accessible local resources.
-- **`dtnbasket-cli` client**: `-s/--sender` (`basket_client`), `-r/--receiver`, `--get <URI>`, `--search <URI>`, `--list <URI>`, `-f/--request-file`, `--req-id`, `--reply-to`, `--sign-*`, `--token-file`, `--socket`.
+- **`dtnbasket-cli` client**: `-s/--sender` (`basket_client`), `-r/--receiver`, `--get <URI>`, `--search <URI>`, `--list <URI>`, `-f/--request-file`, `--req-id`, `--reply-to`, `--aprs-path`, `--hop-limit` (`--hop-count`), `--spray-quota` (`--spray-limit`, `--spray-copies`, `--max-copies`), `--record-route` (`--treb`), `--sign-*`, `--token-file`, `--socket`.
