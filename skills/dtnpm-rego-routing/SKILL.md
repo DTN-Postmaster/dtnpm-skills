@@ -90,7 +90,7 @@ Legacy AX.25 `WIDE1`/`WIDE2` aliases are removed from default policies. Block 20
 
 1. **Kind 1 — CLA / Band / Transport Aliases (New n-N Paradigm only):**
    - Configure `aliases: ["VHF", "2M"]` (or `["UHF"]`, `["10m"]`, `["2G4"]`, `["QO100"]`, `["44NET"]`) on each `clas[]` entry in `HamConfig`.
-   - `dtnpm` automatically appends the transport tag (`TCPCL`, `LTP`, `HQFBP`, `MERCURY`).
+   - `dtnpm` automatically appends the transport tag (`TCPCL`, `LTP`, `HQFBP`, `MERCURY`, `FILE`).
    - Bundles use New n-N syntax (`1 <= N <= n <= 7`): `--aprs-path VHF2-2` (or `--aprs-path QO100-1-1` for digit-ending aliases). Callsigns with SSIDs like `F4JXQ-9` parse unambiguously as strict hops. Forwarded strictly over peers connected on a CLA advertising that alias (with `peer_id` pinning), or parked in `WAIT` if none are connected.
 2. **Kind 2 — ANSRVR Group Aliases (`dtn://<node>/ansrvr`):**
    - Built-in service accepting plain-text commands: `J <GROUP>`, `U <GROUP>`, `K <GROUP>`, `L [GROUP]`, `CQ <GROUP> <MSG>`, `H`/`HELP`.

@@ -1,12 +1,12 @@
 ---
 name: dtnpm-cla-radio-config
 description: >-
-  Configures Convergence Layer Adapters (`tcpclv4`, `hqfbp`, `mercury-arq`, `ltp`) inside `dtnpm` or standalone (`dtnpm-cla-hqfbp-kiss`, `dtnpm-cla-mercury-arq`, `dtnpm-cla-ltp-kiss`), including KISS TCP/Serial, Direwolf, Mercury TNC, `esp-pdu-tnc` (ESP-NOW 250-byte MTU, RaptorQ vs Reed-Solomon encoding selection), half-duplex pacing, rate limits, and explicit safety opt-ins (`--require-callsign`, `--allow-unidentified-rf`, `--allow-unauthenticated-udp`, `allow-ip-migration`). Use when wiring radio modems, KISS TNCs, UDP links, or Hamnet TCPCLv4 peers.
+  Configures Convergence Layer Adapters (`tcpclv4`, `hqfbp`, `mercury-arq`, `ltp`, `file-cla`) inside `dtnpm` or standalone (`dtnpm-cla-hqfbp-kiss`, `dtnpm-cla-mercury-arq`, `dtnpm-cla-ltp-kiss`), including KISS TCP/Serial, Direwolf, Mercury TNC, `esp-pdu-tnc` (ESP-NOW 250-byte MTU, RaptorQ vs Reed-Solomon encoding selection), half-duplex pacing, rate limits, file-based sneakernet/external-tool spooling, and explicit safety opt-ins (`--require-callsign`, `--allow-unidentified-rf`, `--allow-unauthenticated-udp`, `allow-ip-migration`). Use when wiring radio modems, KISS TNCs, UDP links, Hamnet TCPCLv4 peers, or filesystem bundle bridges.
 ---
 
 # Radio & Network CLA Configuration (`dtnpm-cla-*`)
 
-This skill covers configuring the four Convergence Layer Adapter (CLA) families in the `dtn-postmaster` ecosystem, either in integrated mode (`[[clas]]` inside `dtnpm`) or as a standalone daemon over gRPC/UDS.
+This skill covers configuring the five Convergence Layer Adapter (CLA) families in the `dtn-postmaster` ecosystem, either in integrated mode (`[[clas]]` inside `dtnpm`) or as a standalone daemon over gRPC/UDS.
 
 ## 1. TCPCLv4 over Hamnet / 44Net / Internet
 
@@ -117,3 +117,28 @@ By default, LTP over UDP **rejects** unconfigured dynamic peers and source IP mi
 If the environment is already secured (closed WireGuard/IPsec tunnel) or in a lab:
 - Per peer: set `allow-ip-migration = true` in `[[peers]]` only for that peer.
 - Global unauthenticated mode: pass `--allow-unauthenticated-udp` (or `DTN_LTP_ALLOW_UNAUTHENTICATED_UDP=1`) to the `dtnpm-cla-ltp-kiss` binary with full awareness of the risk.
+
+## 5. File-Based CLA (`file-cla` — Sneakernet / USB / External Tools)
+
+Integrated in `dtnpm` via the `cla-file` feature (`desktop`, `amsat`, `node-headless`, and `minimal` profiles). You can instantiate multiple `file-cla` entries with distinct `name`, directories, and APRS `aliases`.
+
+```yaml
+clas:
+  - name: "file-usb"
+    type: "file-cla"          # or "file"
+    aliases: ["USB"]          # automatic transport tag "FILE" is also added
+    outbox: "~/dtn-spool/usb/outbox"   # watched for incoming raw BPv7 files (deleted after dispatch)
+    peers:
+      "dtn://f4usb/": "~/dtn-spool/usb/inbox"  # dtnpm writes forwarded bundles here
+
+  - name: "file-ext-tool"
+    type: "file-cla"
+    aliases: ["EXT"]
+    outbox: "/var/spool/dtn-ext/outbox"
+    peers:
+      "dtn://f4ext/": "/var/spool/dtn-ext/inbox"
+```
+
+- `~/` is expanded against `$HOME`. Configured `outbox` and `peers` directories are created eagerly at startup; if any path cannot be created or accessed, `dtnpm` fails startup with an error.
+- Restrict spool directory permissions (e.g., `0700`) so untrusted local users cannot inject raw BPv7 files into `outbox` or read `inbox` bundles.
+- APRS routing: `--aprs-path USB1-1` routes only to `file-usb`, `--aprs-path EXT1-1` routes only to `file-ext-tool`, and `--aprs-path FILE1-1` reaches all `file-cla` instances.
