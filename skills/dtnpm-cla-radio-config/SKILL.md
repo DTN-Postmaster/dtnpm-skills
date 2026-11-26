@@ -140,7 +140,8 @@ clas:
       "dtn://f4ext/": "/var/lib/dtnpm/spool/ext/inbox"
 ```
 
-- `~/` is expanded against `$HOME`. Missing `outbox` and `peers` directories are created eagerly at startup with `0700` permissions on Unix (`dtnpm` warns if an existing spool directory is group/world-accessible); if any path cannot be created or accessed, `dtnpm` fails startup with an error.
+- `~/` is expanded against `$HOME`. Missing `outbox` and `peers` directories are created eagerly at startup with `0700` permissions on Unix. Existing group/world-accessible directories (`mode & 0o077 != 0`) are **rejected by default** (fail-closed) unless `allow-permissive-spool: true` is explicitly set; if any path cannot be created or accessed, `dtnpm` fails startup with an error.
+- **Pre-flight validation**: Run `dtnpm -c <config> check-config` to validate EIDs, `file-cla` fields, path-safety invariants, and permissions without creating spool directories or starting the BPA.
 - **Systemd (`dtnpm.service`)**: `dtnpm.service` enforces `ProtectSystem=strict` and `ProtectHome=true`, which block writes to `~/...` and `/var/spool/...`. When running under systemd, place spool directories under `/var/lib/dtnpm/spool/...` (`StateDirectory=dtnpm`) or explicitly whitelist custom paths via `ReadWritePaths=` in a unit drop-in.
 - **Path & peer safety guards**: Each peer within a `file-cla` instance must have a distinct `inbox` directory, and `outbox` cannot be empty, `"."`, a station `data-dir`/config directory, or any CLA's `refused/` quarantine directory.
 - **Atomic spooling**: External tools producing bundles into `outbox` should write to a temporary file outside `outbox` and atomically `rename(2)` it into `outbox` to avoid partial reads. Conversely, `hardy-file-cla` currently writes forwarded bundles to `inbox` via `tokio::fs::write` (non-atomic), so external tools consuming from `inbox` over slow media should allow writes to settle before reading.
