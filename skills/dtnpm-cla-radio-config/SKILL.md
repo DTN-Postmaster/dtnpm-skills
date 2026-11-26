@@ -127,6 +127,7 @@ clas:
   - name: "file-usb"
     type: "file-cla"          # or "file"
     aliases: ["USB"]          # automatic transport tag "FILE" is also added
+    max-bundle-size: "64MB"   # optional size cap (default: 64MB; prevents OOM on oversized files)
     outbox: "~/dtn-spool/usb/outbox"   # watched for incoming raw BPv7 files (deleted after dispatch)
     peers:
       "dtn://f4usb/": "~/dtn-spool/usb/inbox"  # dtnpm writes forwarded bundles here
@@ -134,11 +135,13 @@ clas:
   - name: "file-ext-tool"
     type: "file-cla"
     aliases: ["EXT"]
-    outbox: "/var/spool/dtn-ext/outbox"
+    outbox: "/var/lib/dtnpm/spool/ext/outbox"
     peers:
-      "dtn://f4ext/": "/var/spool/dtn-ext/inbox"
+      "dtn://f4ext/": "/var/lib/dtnpm/spool/ext/inbox"
 ```
 
-- `~/` is expanded against `$HOME`. Configured `outbox` and `peers` directories are created eagerly at startup; if any path cannot be created or accessed, `dtnpm` fails startup with an error.
-- Restrict spool directory permissions (e.g., `0700`) so untrusted local users cannot inject raw BPv7 files into `outbox` or read `inbox` bundles.
+- `~/` is expanded against `$HOME`. Missing `outbox` and `peers` directories are created eagerly at startup with `0700` permissions on Unix (`dtnpm` warns if an existing spool directory is group/world-accessible); if any path cannot be created or accessed, `dtnpm` fails startup with an error.
+- **Systemd (`dtnpm.service`)**: `dtnpm.service` enforces `ProtectSystem=strict` and `ProtectHome=true`, which block writes to `~/...` and `/var/spool/...`. When running under systemd, place spool directories under `/var/lib/dtnpm/spool/...` (`StateDirectory=dtnpm`) or explicitly whitelist custom paths via `ReadWritePaths=` in a unit drop-in.
+- **Path & peer safety guards**: Each peer within a `file-cla` instance must have a distinct `inbox` directory, and `outbox` cannot be empty, `"."`, a station `data-dir`/config directory, or any CLA's `refused/` quarantine directory.
+- **Atomic spooling**: External tools producing bundles into `outbox` should write to a temporary file outside `outbox` and atomically `rename(2)` it into `outbox` to avoid partial reads. Conversely, `hardy-file-cla` currently writes forwarded bundles to `inbox` via `tokio::fs::write` (non-atomic), so external tools consuming from `inbox` over slow media should allow writes to settle before reading.
 - APRS routing: `--aprs-path USB1-1` routes only to `file-usb`, `--aprs-path EXT1-1` routes only to `file-ext-tool`, and `--aprs-path FILE1-1` reaches all `file-cla` instances.
